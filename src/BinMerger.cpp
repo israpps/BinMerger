@@ -1,0 +1,142 @@
+/***************************************************************
+ * Name:      BinMerger.cpp
+ * Purpose:   Class implementation for program core
+ * Author:    El_isra (israelson-matias@hotmail.com)
+ * Created:   2022-01-03
+ * Copyright: El_isra (https://www.github.com/israpps)
+ * License:   GPL-3.0
+ **************************************************************/
+#include "BinMerger.h"
+#include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <vector>
+#include <iostream>
+#include <stdio.h>
+#include <sstream>
+#include "common/structs.h"
+
+BinMerger::BinMerger()
+{
+    //ctor
+}
+
+BinMerger::~BinMerger()
+{
+    //dtor
+}
+
+std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
+{
+    bool first_iteration = true;
+    common Common;
+    std::string line, binpath,
+    ROOT = CUEPATH.substr(0,CUEPATH.find_last_of('\\')+1);
+    std::ifstream CUE(CUEPATH);
+    std::smatch match;
+    size_t first_quote_of_FILE = std::string::npos;
+    int last_state = 0;
+    std::vector<bin_t> BINS;
+    if (!CUE.is_open())
+        return BINS;
+    bin_t tmpbin;
+    while (std::getline(CUE, line))
+    {
+        //std::cout<<"|"<<line<<"|\n";
+        if (line.find("FILE") != std::string::npos)
+        {
+            if (last_state == FOUND_INDEX)
+            {
+                BINS.push_back(tmpbin);
+                tmpbin.index.clear();
+                first_iteration = false;
+            }
+            first_quote_of_FILE = line.find_first_of('\"');
+            binpath = line.substr(first_quote_of_FILE +1, line.find_first_of('\"', first_quote_of_FILE + 1) - (first_quote_of_FILE+1));
+            //std::cout <<"["<< binpath<<"]\n";
+            tmpbin.path = binpath;
+            //std::cout <<"reading size of ["<<ROOT<<binpath<<"]\n";
+            tmpbin.size = Common.GetFileSize(ROOT+binpath);
+            //std::cout <<"size: "<<tmpbin.size<<"\n";
+            last_state = FOUND_FILE;
+        }
+        if (line.find("TRACK") != std::string::npos)
+        {
+            if (std::regex_search(line, match, TRACK_REGEX))
+            {
+                //std::cout <<"["<< match[0]<<"]\n";
+                last_state = FOUND_TRACK;
+                tmpbin.track = match[0];
+                if(first_iteration)
+                {
+                    globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
+                }
+            }
+
+        }
+        if (std::regex_search(line, match, INDEX_REGEX))
+        {
+            std::string tmpmatch = match[0];
+             //std::cout <<"["<< match[0]<<"]\n";
+             last_state = FOUND_INDEX;
+             tmpbin.index.push_back(populate_index(match[0]));
+        }
+    }
+    BINS.push_back(tmpbin);
+    tmpbin.index.clear();
+return BINS;
+}
+
+std::string BinMerger::generate_merged_cue(std::vector<bin_t> vec, std::string merged_bin_filename)
+{
+    common Common;
+    std::string new_cue;
+    new_cue = "FILE " + merged_bin_filename + " BINARY\n";
+    size_t sector_pos = 0;
+    for (size_t x = 0; x < vec.size(); x++)
+    {
+        bin_t tmpbin = vec[x];
+        new_cue += "  TRACK " + vec[x].track + "\n";
+        for (size_t z = 0; z < vec[x].index.size();z++)
+        {
+            //std::cout <<"INDEX["<<z<<"] - offset["<<vec[x].index[z].file_offset<<"]\n";
+            new_cue += "    INDEX " + vec[x].index[z].number_as_string + " " + Common.sectors_to_cuestamp(sector_pos + vec[x].index[z].file_offset) + "\n";
+        }
+    sector_pos =(sector_pos + (vec[x].size / globalBlocksize));
+    }
+    //std::cout << "MERGED CUE:\n--------------\n" << new_cue << "\n--------------\n";
+    std::ofstream OUTCUE;
+    OUTCUE.open(merged_bin_filename);
+    OUTCUE << new_cue;
+    OUTCUE.close();
+    return new_cue;
+}
+
+int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
+{
+    std::ofstream OUTFILE ;
+    size_t DD = 0,QQ = 0, vecsize = vec.size();
+    OUTFILE.open(outpath,std::ofstream::binary);
+    for (size_t x = 0; x < vecsize; x++)
+        {QQ += vec[x].size;}
+    std::cout <<QQ <<" -> Merged bin size\n";
+    for (size_t x = 0; x < vecsize; x++)
+    {
+        std::ifstream fin(vec[x].path, std::ifstream::binary);
+        std::vector<char> buffer (1024*1024,0); //reads only the first 1024 bytes
+        while(!fin.eof())
+        {
+            fin.read(buffer.data(), buffer.size());
+            std::streamsize s=fin.gcount();
+            OUTFILE.write(buffer.data(),s);
+            DD += s;
+            //std::cout << PERCENT(DD,QQ)<<"%\r";
+            std::cout << DD <<" bytes written, bin ("<<((x+1)*100/vecsize)<<"%)\r";
+        }
+        //COLOR_INT(07);
+    fin.close();
+    }
+    OUTFILE.close();
+    std::cout << std::endl;
+    return 0;
+}

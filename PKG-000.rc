@@ -1,0 +1,40 @@
+/***************************************************************
+ * Name:      PKG-000.rc
+ * Purpose:   Windows resource
+ * Author:    El_isra (israelson-matias@hotmail.com)
+ * Created:   2022-01-03
+ * Copyright: El_isra (https://www.github.com/israpps)
+ * License:   GPL-3.0
+ **************************************************************/
+#define VOS_NT_WINDOWS32    0x00040004L
+#define VFT_APP                      0x00000001L
+#include "version.h"
+//this will set your .exe icon
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "main.ico"
+
+//include version information in .exe, modify these values to match your needs
+1 VERSIONINFO
+FILEVERSION RC_FILEVERSION
+//FILEVERSION 1,0,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E4"
+		 {
+			 VALUE "CompanyName", "Matías Israelson (AKA: El_isra)"
+			 VALUE "FileVersion", RC_FILEVERSION_STRING
+			 VALUE "FileDescription", "A tool to merge CDRWIN cuesheets with multiple BIN files"
+			 VALUE "InternalName", "BinMerger"
+			 VALUE "LegalCopyright", " "
+			 VALUE "LegalTrademarks", " "
+			 VALUE "OriginalFilename", "BinMerger.exe"
+			 VALUE "ProductName", "Bin Merger"
+			 VALUE "ProductVersion", RC_FILEVERSION_STRING
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1252 //language codes
+	 }
+}

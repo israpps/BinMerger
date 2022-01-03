@@ -1,0 +1,61 @@
+# depslib dependency file v1.0
+1641234005 source:c:\users\usuario\documents\github\binmerger\main.cpp
+	<iostream>
+	<string.h>
+	"BinMerger.h"
+	"version.h"
+
+1641230797 c:\users\usuario\documents\github\binmerger\include\binmerger.h
+	<regex>
+	<string>
+	"common.h"
+	"common/structs.h"
+	<vector>
+
+1641231331 c:\users\usuario\documents\github\binmerger\include\common.h
+	<string>
+	<sstream>
+	"common/structs.h"
+
+1641233999 source:c:\users\usuario\documents\github\binmerger\src\binmerger.cpp
+	"BinMerger.h"
+	<iostream>
+	<fstream>
+	<sys/stat.h>
+	<vector>
+	<iostream>
+	<stdio.h>
+	<sstream>
+	"common/structs.h"
+
+1641231331 c:\users\usuario\documents\github\binmerger\include\common\structs.h
+	"track_t.h"
+	<sstream>
+	<string>
+	<vector>
+
+1641231331 c:\users\usuario\documents\github\binmerger\include\track_t.h
+	<string>
+	<vector>
+
+1641231331 source:c:\users\usuario\documents\github\binmerger\src\common.cpp
+	"common.h"
+	<iostream>
+	<sys/stat.h>
+
+1641231331 source:c:\users\usuario\documents\github\binmerger\src\track_t.cpp
+	"track_t.h"
+
+1641181539 source:c:\users\usuario\documents\github\binmerger\include\common\structs.cpp
+	"common/structs.h"
+	<iostream>
+
+1641184211 c:\users\usuario\documents\github\binmerger\version.h
+
+1641231331 source:c:\users\usuario\documents\github\binmerger\pkg-000.rc
+	"version.h"
+
+1641231331 source:c:\users\usuario\documents\github\binmerger\src\structs.cpp
+	"common/structs.h"
+	<iostream>
+
