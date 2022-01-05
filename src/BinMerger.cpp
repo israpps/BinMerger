@@ -91,7 +91,7 @@ std::string BinMerger::generate_merged_cue(std::vector<bin_t> vec, std::string m
 {
     common Common;
     std::string new_cue;
-    new_cue = "FILE " + merged_bin_filename + " BINARY\n";
+    new_cue = "FILE \"" + merged_bin_filename + ".bin\" BINARY\n";
     size_t sector_pos = 0;
     for (size_t x = 0; x < vec.size(); x++)
     {
@@ -106,7 +106,7 @@ std::string BinMerger::generate_merged_cue(std::vector<bin_t> vec, std::string m
     }
     //std::cout << "MERGED CUE:\n--------------\n" << new_cue << "\n--------------\n";
     std::ofstream OUTCUE;
-    OUTCUE.open(merged_bin_filename);
+    OUTCUE.open(merged_bin_filename+".cue");
     OUTCUE << new_cue;
     OUTCUE.close();
     return new_cue;
@@ -116,7 +116,7 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
 {
     std::ofstream OUTFILE ;
     size_t DD = 0,QQ = 0, vecsize = vec.size();
-    OUTFILE.open(outpath,std::ofstream::binary);
+    OUTFILE.open(outpath+".bin",std::ofstream::binary);
     for (size_t x = 0; x < vecsize; x++)
         {QQ += vec[x].size;}
     std::cout <<QQ <<" -> Merged bin size\n";
