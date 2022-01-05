@@ -22,7 +22,7 @@ jobs:
     - name: Compile project
       run: |
         DATEE=`date '+[%Y-%m-%d]'`
-        SCH=${GITHUB_SHA::7}
+        SCH= ${{ github.sha }}
         mv LICENSE LICENSE.TXT
         echo "BinMerger, coded by Matias israelson." >README.TXT
         echo "package compiled and released on $DATEE" >>README.TXT
