@@ -22,11 +22,10 @@ jobs:
     - name: Compile project
       run: |
         DATEE=`date '+[%Y-%m-%d]'`
-        SCH= ${{ github.sha }}
         mv LICENSE LICENSE.TXT
         echo "BinMerger, coded by Matias israelson." >README.TXT
         echo "package compiled and released on $DATEE" >>README.TXT
-        echo "Commit $SCH" >>README.TXT
+        echo "Commit  ${{ github.sha }}" >>README.TXT
         mkdir build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
