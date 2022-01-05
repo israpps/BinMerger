@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - v*
+  pull_request:
+  repository_dispatch:
+    types: [run_build]
+
+jobs:
+  build-win:
+    runs-on: ubuntu-latest
+    container: dockcross/windows-static-x86:latest
+    steps:
+
+    - uses: actions/checkout@v2
+    - run: |
+        git fetch --prune --unshallow
+    - name: Compile project
+      run: |
+        DATEE=`date '+[%Y-%m-%d]'`
+        SCH=${GITHUB_SHA::7}
+        mv LICENSE LICENSE.TXT
+        echo "BinMerger, coded by Matias israelson." >README.TXT
+        echo "package compiled and released on $DATEE" >>README.TXT
+        echo "Commit $SCH" >>README.TXT
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        make clean all
+        7z a -t7z BinMerger.7z BinMerger.exe ../LICENSE.TXT ../README.TXT
+        ls -r
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: TITLE_CFG_MAKER
+        path: |
+             build/BinMerger.7z
+    - name: Deploy pre-release
+      uses: softprops/action-gh-release@v1
+      if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+      with:
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        fail_on_unmatched_files: true
+        files: |
+            build/BinMerger.7z
+        name: "Latest build"
+        tag_name: "Latest"
+        prerelease: true
