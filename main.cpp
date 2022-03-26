@@ -13,13 +13,13 @@ using namespace std;
 #include "version.h"
 int main(int argc, char** argv)
 {
-    std::string ARGV0 = argv[0];
+    std::string ARGV0 = argv[0], mrg;
     std::cout <<"\tBinMerger "<<AutoVersion::FULLVERSION_STRING<<"\n"<<
                 "\tCoded By Matias Israelson (El_isra)  [www.github.com/israpps]\n";
     if (argc < 2) {std::cerr << "not enough argumments\nUsage:\n\t"<<ARGV0.substr(ARGV0.find_last_of('\\')+1)<<" [CUE Location] [New Filename (without extension)]\n";return -1;}
     if (argc== 2)
     {
-        std::string mrg = argc[1];
+        mrg = argc[1];
         mrg += "_merged";
     }
     BinMerger A;
