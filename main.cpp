@@ -20,6 +20,6 @@ int main(int argc, char** argv)
     BinMerger A;
     std::vector<bin_t> B = A.parse_cue(std::string(argv[1]));
     A.generate_merged_cue(B,std::string(argv[2]));
-    A.fuse_bins(B, (argc < 3) ? std::string(argv[2]) : std::string(argv[1])+"_merge");
+    A.fuse_bins(B, (argc < 3) ? std::string(argv[2]) : std::string(argv[1]"_merge"));
     return 0;
 }
