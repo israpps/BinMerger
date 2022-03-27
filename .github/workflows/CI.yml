@@ -30,7 +30,7 @@ jobs:
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
         make clean all
-        7z a -t7z BinMerger.7z BinMerger.exe ../LICENSE.TXT ../README.TXT
+        7z a -t7z BinMerger.7z BinMerger.exe ../LICENSE.TXT ../README.TXT ../drag-and-drop.bat
         ls -r
     - name: Upload artifacts
       if: ${{ success() }}
