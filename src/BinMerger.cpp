@@ -17,17 +17,14 @@
 #include "common/structs.h"
 
 BinMerger::BinMerger()
-{
-    //ctor
-}
+{}
 
 BinMerger::~BinMerger()
-{
-    //dtor
-}
+{}
 
 std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
 {
+	std::cout << "Parsing cue file...\n";
     bool first_iteration = true;
     common Common;
     std::string line, binpath,
@@ -35,16 +32,22 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
     std::ifstream CUE(CUEPATH);
     std::smatch match;
     size_t first_quote_of_FILE = std::string::npos;
-    int last_state = 0;
+    int last_state = 0, linecount = 0;
     std::vector<bin_t> BINS;
     if (!CUE.is_open())
         return BINS;
     bin_t tmpbin;
     while (std::getline(CUE, line))
     {
+		linecount++;
         //std::cout<<"|"<<line<<"|\n";
         if (line.find("FILE") != std::string::npos)
         {
+			if (last_state == FOUND_TRACK)
+			{
+				std::cerr << "ERROR: expected track index on line ["<<linecount<<"], instead, FILE entry was found\n"; 
+				goto ERR;
+			}
             if (last_state == FOUND_INDEX)
             {
                 BINS.push_back(tmpbin);
@@ -53,15 +56,15 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
             }
             first_quote_of_FILE = line.find_first_of('\"');
             binpath = line.substr(first_quote_of_FILE +1, line.find_first_of('\"', first_quote_of_FILE + 1) - (first_quote_of_FILE+1));
-            //std::cout <<"["<< binpath<<"]\n";
             tmpbin.path = binpath;
-            //std::cout <<"reading size of ["<<ROOT<<binpath<<"]\n";
             tmpbin.size = Common.GetFileSize(ROOT+binpath);
-            //std::cout <<"size: "<<tmpbin.size<<"\n";
+			if (tmpbin.size < 1) {std::cerr << "ERROR: bin file sociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n"; goto ERR;}
             last_state = FOUND_FILE;
         }
         if (line.find("TRACK") != std::string::npos)
         {
+			if (last_state != FOUND_FILE)
+			{std::cerr<< "ERROR: found TRACK entry on line ["<<linecount<<"], expected previous entry to be a FILE entry...\n"; goto ERR;}
             if (std::regex_search(line, match, TRACK_REGEX))
             {
                 //std::cout <<"["<< match[0]<<"]\n";
@@ -71,20 +74,28 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
                 {
                     globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
                 }
-            }
+            } else {std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n"; goto ERR:}
 
         }
         if (std::regex_search(line, match, INDEX_REGEX))
         {
+			if (last_state != FOUND_INDEX || last_state != FOUND_TRACK)
+			{
+				std::cerr <<"ERROR: Found INDEX entry on line ["<<linecount<<"], previously expected another INDEX or TRACK entry\n";
+				goto ERR;
+			}
             std::string tmpmatch = match[0];
-             //std::cout <<"["<< match[0]<<"]\n";
-             last_state = FOUND_INDEX;
-             tmpbin.index.push_back(populate_index(match[0]));
+            last_state = FOUND_INDEX;
+            tmpbin.index.push_back(populate_index(match[0]));
         }
     }
+	
     BINS.push_back(tmpbin);
     tmpbin.index.clear();
-return BINS;
+	return BINS;
+	ERR:
+	BINS.clear():
+	return BINS;
 }
 
 std::string BinMerger::generate_merged_cue(std::vector<bin_t> vec, std::string merged_bin_filename)
