@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     if (argc < 2) {std::cerr << "not enough argumments\nUsage:\n\t"<<ARGV0.substr(ARGV0.find_last_of('\\')+1)<<" [CUE Location] [New Filename (without extension)]\n";return -1;}
     if (argc== 2)
     {
-        mrg = argv[1];
+        mrg = std::string(argv[1]);
         mrg += "_merged";
     }
     BinMerger A;
