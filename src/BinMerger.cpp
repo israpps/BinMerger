@@ -35,7 +35,10 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
     int last_state = 0, linecount = 0;
     std::vector<bin_t> BINS;
     if (!CUE.is_open())
+    {
+        std::cerr << "ERROR: Can't open original cue file for processing...\nprovided file path was: \""<<CUEPATH<<"\"\n"
         return BINS;
+    }
     bin_t tmpbin;
     while (std::getline(CUE, line))
     {
