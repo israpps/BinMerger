@@ -48,7 +48,7 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
         {
 			if (last_state == FOUND_TRACK)
 			{
-				std::cerr << "ERROR: expected track index on line ["<<linecount<<"], instead, FILE entry was found\n"; 
+				std::cerr << "ERROR: expected track index on line ["<<linecount<<"], instead, FILE entry was found\n";
 				goto ERR;
 			}
             if (last_state == FOUND_INDEX)
@@ -57,16 +57,16 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
                 tmpbin.index.clear();
                 first_iteration = false;
             }
+            last_state = FOUND_FILE;
             first_quote_of_FILE = line.find_first_of('\"');
             binpath = line.substr(first_quote_of_FILE +1, line.find_first_of('\"', first_quote_of_FILE + 1) - (first_quote_of_FILE+1));
             tmpbin.path = binpath;
             tmpbin.size = Common.GetFileSize(ROOT+binpath);
-			if (tmpbin.size < 1) 
+			if (tmpbin.size < 1)
 			{
-				std::cerr << "ERROR: bin file asociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n"; 
+				std::cerr << "ERROR: bin file asociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n";
 				goto ERR;
 			}
-            last_state = FOUND_FILE;
 		}
         if (line.find("TRACK") != std::string::npos)
         {
@@ -78,27 +78,30 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
 				{
 					globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
 				}
-			} 
-			else 
+			}
+			else
 			{
-				std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n"; 
+				std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n";
 				goto ERR;
 			}
 
 		}
 		if (std::regex_search(line, match, INDEX_REGEX))
 		{
-			if ((last_state != FOUND_INDEX) || (last_state != FOUND_TRACK))
-			{
+			if ((last_state == FOUND_INDEX) || (last_state == FOUND_TRACK))
+            {
+                std::string tmpmatch = match[0];
+                last_state = FOUND_INDEX;
+                tmpbin.index.push_back(populate_index(match[0]));
+            }
+            else
+            {
 				std::cerr <<"ERROR: Found INDEX entry on line ["<<linecount<<"], previously expected another INDEX or TRACK entry\n";
 				goto ERR;
 			}
-			std::string tmpmatch = match[0];
-			last_state = FOUND_INDEX;
-			tmpbin.index.push_back(populate_index(match[0]));
 		}
 	}
-	
+
 	BINS.push_back(tmpbin);
 	tmpbin.index.clear();
 	return BINS;
@@ -143,7 +146,7 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
     for (size_t x = 0; x < vecsize; x++)
     {
         std::ifstream fin(vec[x].path, std::ifstream::binary);
-        if (!fin.is_open()) 
+        if (!fin.is_open())
             {std::cerr <<"\nERROR: Can't open bin number "<< vecsize <<"\npath: \""<<vec[x].path<<"\"\naborting file creation...\n";}
         std::vector<char> buffer (1024*1024,0); //reads only the first 1024 bytes
         while(!fin.eof())
