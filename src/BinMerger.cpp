@@ -70,37 +70,37 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
 		}
         if (line.find("TRACK") != std::string::npos)
         {
-            if (std::regex_search(line, match, TRACK_REGEX))
-            {
-                last_state = FOUND_TRACK;
-                tmpbin.track = match[0];
-                if(first_iteration)
-                {
-                    globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
-                }
-            } 
+			last_state = FOUND_TRACK;
+			if (std::regex_search(line, match, TRACK_REGEX))
+			{
+				tmpbin.track = match[0];
+				if(first_iteration)
+				{
+					globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
+				}
+			} 
 			else 
 			{
 				std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n"; 
 				goto ERR;
 			}
 
-        }
-        if (std::regex_search(line, match, INDEX_REGEX))
-        {
+		}
+		if (std::regex_search(line, match, INDEX_REGEX))
+		{
 			if ((last_state != FOUND_INDEX) || (last_state != FOUND_TRACK))
 			{
 				std::cerr <<"ERROR: Found INDEX entry on line ["<<linecount<<"], previously expected another INDEX or TRACK entry\n";
 				goto ERR;
 			}
-            std::string tmpmatch = match[0];
-            last_state = FOUND_INDEX;
-            tmpbin.index.push_back(populate_index(match[0]));
-        }
-    }
+			std::string tmpmatch = match[0];
+			last_state = FOUND_INDEX;
+			tmpbin.index.push_back(populate_index(match[0]));
+		}
+	}
 	
-    BINS.push_back(tmpbin);
-    tmpbin.index.clear();
+	BINS.push_back(tmpbin);
+	tmpbin.index.clear();
 	return BINS;
 	ERR:
 	BINS.clear();
