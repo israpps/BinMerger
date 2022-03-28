@@ -61,28 +61,34 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
             binpath = line.substr(first_quote_of_FILE +1, line.find_first_of('\"', first_quote_of_FILE + 1) - (first_quote_of_FILE+1));
             tmpbin.path = binpath;
             tmpbin.size = Common.GetFileSize(ROOT+binpath);
-			if (tmpbin.size < 1) {std::cerr << "ERROR: bin file asociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n"; goto ERR;}
+			if (tmpbin.size < 1) 
+			{
+				std::cerr << "ERROR: bin file asociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n"; 
+				goto ERR;
+			}
             last_state = FOUND_FILE;
-        }
+		}
         if (line.find("TRACK") != std::string::npos)
         {
-			//if (last_state != FOUND_FILE)
-			//{std::cerr<< "ERROR: found TRACK entry on line ["<<linecount<<"], expected previous entry to be a FILE entry...\n"; goto ERR;}
             if (std::regex_search(line, match, TRACK_REGEX))
             {
-                //std::cout <<"["<< match[0]<<"]\n";
                 last_state = FOUND_TRACK;
                 tmpbin.track = match[0];
                 if(first_iteration)
                 {
                     globalBlocksize = get_BlockSize(tmpbin.track.substr(tmpbin.track.find_first_of(' ')+1 ) );
                 }
-            } else {std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n"; goto ERR;}
+            } 
+			else 
+			{
+				std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n"; 
+				goto ERR;
+			}
 
         }
         if (std::regex_search(line, match, INDEX_REGEX))
         {
-			if (last_state != FOUND_INDEX || last_state != FOUND_TRACK)
+			if ((last_state != FOUND_INDEX) || (last_state != FOUND_TRACK))
 			{
 				std::cerr <<"ERROR: Found INDEX entry on line ["<<linecount<<"], previously expected another INDEX or TRACK entry\n";
 				goto ERR;
