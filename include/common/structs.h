@@ -8,27 +8,30 @@
  **************************************************************/
 #ifndef STRUCTS_H_INCLUDED
 #define STRUCTS_H_INCLUDED
-#include "track_t.h"
+
 #include <sstream>
 #include <string>
 #include <vector>
-        struct index_t
-        {
-            int number;
-            std::string number_as_string;
-            int minutes;
-            int secconds;
-            int fields;
-            size_t file_offset;
-        };
 
-        struct bin_t
-        {
-        std::string path;
-        std::vector <index_t> index;
-        std::string track;
-        size_t size;
-        };
+#include "track_t.h"
+
+struct index_t
+{
+    int number;
+    std::string number_as_string;
+    int minutes;
+    int secconds;
+    int fields;
+    size_t file_offset;
+};
+
+struct bin_t
+{
+    std::string path;
+    std::vector <index_t> index;
+    std::string track;
+    size_t size;
+};
 index_t populate_index(std::string regex_match_);
 
 #endif // STRUCTS_H_INCLUDED

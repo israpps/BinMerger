@@ -15,15 +15,15 @@ get_BlockSize(std::string TRACK_TIPE)
         (TRACK_TIPE == "MODE1/2352") ||
         (TRACK_TIPE == "MODE2/2352") ||
         (TRACK_TIPE == "CDI/2352"))
-       return 2352;
+        return 2352;
 
     if (TRACK_TIPE == "CDG") return 2448;
 
     if (TRACK_TIPE == "MODE1/2048") return 2048;
 
     if (
-       (TRACK_TIPE == "MODE2/2336") ||
-       (TRACK_TIPE == "CDI/2336"))
+        (TRACK_TIPE == "MODE2/2336") ||
+        (TRACK_TIPE == "CDI/2336"))
         return 2336;
     return 2352;
 }

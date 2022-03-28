@@ -10,31 +10,41 @@
 #include <iostream>
 #include <sys/stat.h>
 common::common()
-{
-    //ctor
-}
+{}
 
 common::~common()
-{
-    //dtor
-}
+{}
+
 int common::cuestamp_to_sectors(std::string stamp)
 {
     std::stringstream test(stamp);
     std::string segment;
-    int minutes , seconds, fields, count = 1;
+    int minutes, seconds, fields, count = 1;
 
     while(std::getline(test, segment, '_'))
     {
         if (count == 1)
-            {minutes = stoi(segment); count++;}
+        {
+            minutes = stoi(segment);
+            count++;
+        }
         if (count == 2)
-            {seconds = stoi(segment); count++;}
+        {
+            seconds = stoi(segment);
+            count++;
+        }
         if (count == 3)
-            {fields  = stoi(segment); break;}
+        {
+            fields  = stoi(segment);
+            break;
+        }
 
     }
-    if (count != 3) {std::cerr <<"invalid cuestamp...\n"; return -1;}
+    if (count != 3)
+    {
+        std::cerr <<"invalid cuestamp...\n";
+        return -1;
+    }
     return ( fields + (seconds * 75) + (minutes * 60 * 75) );
 }
 int common::cuestamp_to_sectors (index_t INDEX)

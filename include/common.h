@@ -15,17 +15,17 @@
 
 class common
 {
-    public:
-        common();
-        virtual ~common();
-        std::string sectors_to_cuestamp (int sectors);
-        int cuestamp_to_sectors (std::string stamp);
-        size_t GetFileSize(std::string filename);
-        int cuestamp_to_sectors (index_t INDEX);
+public:
+    common();
+    virtual ~common();
+    std::string sectors_to_cuestamp (int sectors);
+    int cuestamp_to_sectors (std::string stamp);
+    size_t GetFileSize(std::string filename);
+    int cuestamp_to_sectors (index_t INDEX);
 
-    protected:
+protected:
 
-    private:
+private:
 };
 
 #endif // COMMON_H

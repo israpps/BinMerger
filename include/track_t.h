@@ -13,19 +13,19 @@
 #include <vector>
 class track_t
 {
-    public:
-        track_t(std::string Track_type, int Num);
+public:
+    track_t(std::string Track_type, int Num);
 
-        virtual ~track_t();
+    virtual ~track_t();
 
-    protected:
+protected:
 
-    private:
-        int num;
-        std::vector<int> indexes;
-        size_t file_offset;
-        size_t sectors;
-        size_t globalBlocksize;
+private:
+    int num;
+    std::vector<int> indexes;
+    size_t file_offset;
+    size_t sectors;
+    size_t globalBlocksize;
 };
 
 #endif // TRACK_T_H

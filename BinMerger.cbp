@@ -42,12 +42,12 @@
 		</Unit>
 		<Unit filename="include/BinMerger.h" />
 		<Unit filename="include/common.h" />
-		<Unit filename="include/common/structs.cpp" />
 		<Unit filename="include/common/structs.h" />
 		<Unit filename="include/track_t.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BinMerger.cpp" />
 		<Unit filename="src/common.cpp" />
+		<Unit filename="src/structs.cpp" />
 		<Unit filename="src/track_t.cpp" />
 		<Unit filename="version.h" />
 		<Extensions>
