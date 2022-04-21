@@ -64,4 +64,5 @@ jobs:
         name: "Latest build"
         tag_name: "Latest"
         prerelease: true
+        generate_release_notes: true
         
