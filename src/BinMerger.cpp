@@ -107,7 +107,7 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
     if (file_count < 2) {std::cerr<<"ERROR: less than two bin files on CUE...\nAborting process...\n"; goto ERR;}
     BINS.push_back(tmpbin);
     tmpbin.index.clear();
-    std::cout << "[Cue Parser]: Cue parsing finished. found ["<<file_count <<"] bin files, ["<<track_count<< "] Tracks and ["<< index_count <<"] Indexes. Global Block Size: ["<<globalBlocksize<<"\n";
+    std::cout << "[Cue Parser]: parsing finished. found ["<<file_count <<"] bin files, ["<<track_count<< "] Tracks and ["<< index_count <<"] Indexes. Global Block Size: ["<<globalBlocksize<<"]\n";
     return BINS;
 ERR:
     BINS.clear();
