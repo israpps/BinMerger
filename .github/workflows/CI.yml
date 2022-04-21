@@ -3,21 +3,29 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - 'main'
+      - 'master'
+      - 'v*'
     tags:
       - v*
   pull_request:
+  workflow_dispatch:
   repository_dispatch:
     types: [run_build]
 
+
 jobs:
-  build-win:
+  build:
+    strategy:
+     matrix:
+       toolchain: ["windows-static-x86","linux-x86"]
     runs-on: ubuntu-latest
-    container: dockcross/windows-static-x86:latest
+    container: dockcross/${{ matrix.toolchain }}:latest
     steps:
 
     - uses: actions/checkout@v2
     - run: |
+        sudo apt-get install --assume-yes p7zip-full 
         git fetch --prune --unshallow
     - name: Compile project
       run: |
@@ -30,15 +38,21 @@ jobs:
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
         make clean all
-        7z a -t7z BinMerger.7z BinMerger.exe ../LICENSE.TXT ../README.TXT ../drag-and-drop.bat
-        ls -r
+        7z a -t7z ${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z ../LICENSE.TXT ../README.TXT "${{ github.event.repository.name }}*"
+    
+    - name: "compress (windows-only files)"
+      if:   contains(matrix.toolchain, 'windows')
+      run: |
+        cd build
+        7z a -t7z ${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z ../drag-and-drop.bat
+        
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: TITLE_CFG_MAKER
+        name: ${{ github.event.repository.name }}-${{ matrix.toolchain }}
         path: |
-             build/BinMerger.7z
+             build/${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z
     - name: Deploy pre-release
       uses: softprops/action-gh-release@v1
       if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
@@ -46,7 +60,8 @@ jobs:
         token: "${{ secrets.GITHUB_TOKEN }}"
         fail_on_unmatched_files: true
         files: |
-            build/BinMerger.7z
+            build/${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z
         name: "Latest build"
         tag_name: "Latest"
         prerelease: true
+        

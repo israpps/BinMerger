@@ -8,7 +8,7 @@
  **************************************************************/
 #include "track_t.h"
 
-get_BlockSize(std::string TRACK_TIPE)
+size_t get_BlockSize(std::string TRACK_TIPE)
 {
     if (
         (TRACK_TIPE == "AUDIO")      ||
