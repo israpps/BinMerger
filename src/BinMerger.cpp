@@ -24,6 +24,7 @@ BinMerger::~BinMerger()
 
 std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
 {
+    int track_count = 0, index_count = 0, file_count = 0;
     std::cout << "Parsing cue file...\n";
     bool first_iteration = true;
     common Common;
@@ -67,6 +68,7 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
                 std::cerr << "ERROR: bin file asociated to FILE entry on line ["<<linecount<<"] can't be stated to obtain file data\n";
                 goto ERR;
             }
+            file_count++;
         }
         if (line.find("TRACK") != std::string::npos)
         {
@@ -84,7 +86,7 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
                 std::cerr << "ERROR: can't find TRACK data on line ["<<linecount<<"]\n";
                 goto ERR;
             }
-
+        track_count++;
         }
         if (std::regex_search(line, match, INDEX_REGEX))
         {
@@ -99,11 +101,13 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
                 std::cerr <<"ERROR: Found INDEX entry on line ["<<linecount<<"], previously expected another INDEX or TRACK entry\n";
                 goto ERR;
             }
+            index_count++;
         }
     }
-
+    if (file_count < 2) {std::cerr<<"ERROR: less than two bin files on CUE...\nAborting process...\n"; goto ERR;}
     BINS.push_back(tmpbin);
     tmpbin.index.clear();
+    std::cout << "[Cue Parser]: Cue parsing finished. found ["<<file_count <<"] bin files, ["<<track_count<< "] Tracks and ["<< index_count <<"] Indexes. Global Block Size: ["<<globalBlocksize<<"\n";
     return BINS;
 ERR:
     BINS.clear();
