@@ -4,7 +4,7 @@
  * Author:    El_isra (israelson-matias@hotmail.com)
  * Created:   2022-01-03
  * Copyright: El_isra (https://www.github.com/israpps)
- * License:   GPL-3.0
+ * License:   MIT License
  **************************************************************/
 #ifndef STRUCTS_H_INCLUDED
 #define STRUCTS_H_INCLUDED
