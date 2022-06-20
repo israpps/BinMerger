@@ -24,8 +24,8 @@ BinMerger::~BinMerger()
 
 std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
 {
-    int track_count = 0, index_count = 0, file_count = 0;
     std::cout << "Parsing cue file...\n";
+    int track_count = 0, index_count = 0, file_count = 0, last_state = 0, linecount = 0;
     bool first_iteration = true;
     common Common;
     std::string line, binpath,
@@ -33,7 +33,7 @@ std::vector<bin_t> BinMerger::parse_cue(std::string CUEPATH)
     std::ifstream CUE(CUEPATH);
     std::smatch match;
     size_t first_quote_of_FILE = std::string::npos;
-    int last_state = 0, linecount = 0;
+    
     std::vector<bin_t> BINS;
     if (!CUE.is_open())
     {
