@@ -162,11 +162,12 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
             std::streamsize s=fin.gcount();
             OUTFILE.write(buffer.data(),s);
             DD += s;
-            std::cout << DD <<" bytes written, bin ("<< (float)DD*100/(float)QQ <<"%)\r";
+            std::cout << DD <<" bytes written, bin ("<< (float)DD*100/(float)QQ <<"%)\t\r";
         }
         //COLOR_INT(07);
         fin.close();
     }
+    std::cout << std::endl;
     OUTFILE.close();
     std::cout << std::endl;
     return 0;
