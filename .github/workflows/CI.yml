@@ -69,16 +69,6 @@ jobs:
         path: |
              build/${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z
 
-    - name: delete previous tag/release
-      if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-      uses: dev-drprasad/delete-tag-and-release@v0.2.0
-      with:
-        delete_release: true
-        tag_name: "Latest"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
     - name: Deploy pre-release
       uses: softprops/action-gh-release@v1
       if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
