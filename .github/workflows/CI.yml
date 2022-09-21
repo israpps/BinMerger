@@ -23,12 +23,25 @@ jobs:
     container: dockcross/${{ matrix.toolchain }}:latest
     steps:
 
-    - uses: actions/checkout@v2
-    - run: |
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: fix ownership, add dependencies and fetch
+      run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
         sudo apt-get install --assume-yes p7zip-full 
         git fetch --prune --unshallow
-
+        
+    - name: Create changelog
+      if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+      run: |
+        echo Latest changes:>>CHANGELOG.MD
+        if [ $(git tag -l "Latest") ]; then COMPARISON="Latest..HEAD"; else COMPARISON=""; fi
+        git --no-pager log $COMPARISON --pretty=format:"- %h  %<(18)%an: %s">>CHANGELOG.MD
+        cat CHANGELOG.MD
+          
     - name: Compile project
       run: |
         DATEE=`date '+[%Y-%m-%d]'`
@@ -55,10 +68,22 @@ jobs:
         name: ${{ github.event.repository.name }}-${{ matrix.toolchain }}
         path: |
              build/${{ github.event.repository.name }}-${{ matrix.toolchain }}.7z
+
+    - name: delete previous tag/release
+      if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+      uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      with:
+        delete_release: true
+        tag_name: "Latest"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
     - name: Deploy pre-release
       uses: softprops/action-gh-release@v1
       if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
       with:
+        body_path: CHANGELOG.MD
         token: "${{ secrets.GITHUB_TOKEN }}"
         fail_on_unmatched_files: true
         files: |
@@ -66,5 +91,4 @@ jobs:
         name: "Latest build"
         tag_name: "Latest"
         prerelease: true
-        generate_release_notes: true
         
