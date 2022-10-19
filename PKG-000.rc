@@ -4,7 +4,7 @@
  * Author:    El_isra (israelson-matias@hotmail.com)
  * Created:   2022-01-03
  * Copyright: El_isra (https://www.github.com/israpps)
- * License:   GPL-3.0
+ * License:   MIT License
  **************************************************************/
 #define VOS_NT_WINDOWS32    0x00040004L
 #define VFT_APP                      0x00000001L
@@ -22,7 +22,7 @@ FILETYPE VFT_APP
 	 {
 		 BLOCK "040904E4"
 		 {
-			 VALUE "CompanyName", "Matías Israelson (AKA: El_isra)"
+			 VALUE "CompanyName", "MatÃ­as Israelson (AKA: El_isra)"
 			 VALUE "FileVersion", RC_FILEVERSION_STRING
 			 VALUE "FileDescription", "A tool to merge CDRWIN cuesheets with multiple BIN files"
 			 VALUE "InternalName", "BinMerger"
