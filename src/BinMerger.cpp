@@ -173,7 +173,7 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
     return 0;
     ERR:
     std::cout << "\n\n";
-    OUTFILE.close()
-    fin.close()
+    OUTFILE.close();
+    fin.close();
     return -1;
 }
