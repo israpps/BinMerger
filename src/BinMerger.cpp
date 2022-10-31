@@ -154,6 +154,7 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
         if (!fin.is_open())
         {
             std::cerr <<"\n\nERROR: Can't open bin number "<< x <<"\npath: \""<<vec[x].path<<"\"\naborting file creation...\n";
+            fin.close();
             goto ERR;
         }
         std::vector<char> buffer (1024*1024,0); //reads only the first 1024 bytes
@@ -174,6 +175,5 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
     ERR:
     std::cout << "\n\n";
     OUTFILE.close();
-    fin.close();
     return -1;
 }
