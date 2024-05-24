@@ -138,6 +138,31 @@ std::string BinMerger::generate_merged_cue(std::vector<bin_t> vec, std::string m
     return new_cue;
 }
 
+void
+genericgauge (float progress, size_t extra)
+{
+    int barWidth = 70;
+
+    std::cout << "[";
+    int pos = barWidth * progress;
+    for (int i = 0; i < barWidth; ++i)
+	{
+	  if (i < pos)
+		std::cout << "=";
+	  else if (i == pos)
+		std::cout << ">";
+	  else
+		std::cout << " ";
+	}
+    std::cout << "] " << int (progress * 100.0) << "% (" << extra <<")b\r";
+    std::cout.flush ();
+}
+
+//percentage represented on signed integer. values from 0-100
+void genericgaugepercent(int percent, size_t extra) {
+    genericgauge(percent*0.01, extra);
+}
+
 int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
 {
     std::ofstream OUTFILE ;
@@ -164,7 +189,8 @@ int BinMerger::fuse_bins(std::vector<bin_t>vec, std::string outpath)
             std::streamsize s=fin.gcount();
             OUTFILE.write(buffer.data(),s);
             DD += s;
-            std::cout << DD <<" bytes written, bin ("<< (float)DD*100/(float)QQ <<"%)\t\r";
+            //std::cout << DD <<" bytes written, bin ("<< (float)DD*100/(float)QQ <<"%)\t\r";
+            genericgaugepercent((DD*100/(float)QQ), DD);
         }
         //COLOR_INT(07);
         fin.close();
